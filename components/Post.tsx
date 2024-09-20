@@ -1,26 +1,58 @@
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 
-import { PostType } from '../types/interfaces/post.interface';
+import CommentsFeed from './CommentsFeed';
+import { PostType } from '../interfaces/post.interface';
+import { useFeedStore } from '../store/feed.store';
 
 interface PostProps {
-    post: PostType
+    post: PostType;
 }
 
+//todo jsdoc
 const Post: FC<PostProps> = ({ post }) => {
+
+    const { updatePostLike } = useFeedStore();
+
+    const [isLikePress, setIsLikePress] = useState(false);
+
+    const handleOnPressLike = () => {
+        const changeLikeNum = isLikePress ? -1 : 1;
+        updatePostLike(post.id, changeLikeNum);
+        setIsLikePress(prev => !prev);
+    };
+
     return (
         <View style={styles.postContainer}>
-            <Text>{post.title}</Text>
-            <Image
-                style={styles.image}
-                source={{ uri: "https://picsum.photos/100" }}
-            />
-            <TouchableOpacity style={styles.likeImage}>
+            <>
+                <Text>
+                    {post.author}
+                </Text>
+                <Text>
+                    {post.createDate.toDateString()}
+                </Text>
+            </>
+            <Text>
+                {post.content}
+            </Text>
+            {post.imageUrl && (
                 <Image
-                    style={styles.likeImage}
-                    source={{ uri: "https://upload.wikimedia.org/wikipedia/commons/1/13/Facebook_like_thumb.png" }}
+                    style={styles.image}
+                    source={{ uri: post.imageUrl }}
                 />
-            </TouchableOpacity>
+            )}
+            <View style={styles.likeContainer}>
+                <TouchableOpacity onPress={handleOnPressLike}>
+                    <Image
+                        style={[styles.likeIcon, isLikePress ? styles.isLikePress : styles.isLikeNotPress]}
+                        source={{ uri: "https://upload.wikimedia.org/wikipedia/commons/1/13/Facebook_like_thumb.png" }}
+                    />
+                </TouchableOpacity>
+                <Text style={styles.likesAmount}>
+                    {post.likes}
+                </Text>
+            </View>
+            <CommentsFeed />
         </View>
     );
 };
@@ -31,17 +63,32 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderBottomColor: 'gray',
         justifyContent: "center",
+        paddingBottom: 15,
     },
     image: {
-        width: 100,
-        height: 100,
+        width: "100%",
+        height: 200,
+        marginTop: 10,
+        resizeMode: 'cover',
+    },
+    likeContainer: {
+        flexDirection: 'row',
+        alignItems: "center",
         marginTop: 10,
     },
-    likeImage: {
+    likeIcon: {
         width: 35,
         height: 30,
-        marginTop: 10,
-        marginBottom: 15
+        marginStart: 5,
+    },
+    likesAmount: {
+        marginStart: 5,
+    },
+    isLikePress: {
+        backgroundColor: "blue"
+    },
+    isLikeNotPress: {
+        backgroundColor: "gray"
     }
 });
 
