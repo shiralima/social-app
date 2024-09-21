@@ -1,25 +1,27 @@
-import React, { FC, useEffect } from "react";
-import { FlatList } from 'react-native';
+import React, { FC } from "react";
 import { observer } from 'mobx-react-lite';
+import { ActivityIndicator, FlatList } from 'react-native';
 
 import { useFeedStore } from "../store/feed.store";
+import { usePostsInfiniteScroll } from "../hooks/usePostsInfiniteScroll";
 
 import Post from './Post';
 
-// todo jsdoc
+/**
+ * display posts feed with infinite scrolling
+ * @returns {JSX.Element} rendered posts feed
+ */
 const PostsFeed: FC = () => {
-
-    const { post, fetchPosts } = useFeedStore();
-
-    useEffect(() => {
-        fetchPosts(); //todo put here async to simulate the fetch ?
-    }, [])
+    const { posts } = useFeedStore();
+    const { loading, loadPosts } = usePostsInfiniteScroll();
 
     return (
         <FlatList
-            data={post}
+            data={posts}
             renderItem={({ item }) => <Post post={item} />}
             keyExtractor={({ id }) => id}
+            onEndReached={loadPosts}
+            ListFooterComponent={loading ? <ActivityIndicator size='large' color='red' /> : null}
         />
     );
 };

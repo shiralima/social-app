@@ -1,43 +1,48 @@
 import React, { FC, useEffect, useState } from "react";
 import { FlatList, TouchableOpacity, View, Text } from 'react-native';
 
-import { useFeedStore } from "../store/feed.store";
-
 import Comment from './Comment';
+import { useFeedStore } from "../store/feed.store";
+import { observer } from "mobx-react-lite";
+
+type PropsCommentsFeed = {
+    postId: string;
+};
 
 // todo jsdoc
-const CommentsFeed: FC = () => {
-
-    const { comments, fetchComments } = useFeedStore();
+const CommentsFeed: FC<PropsCommentsFeed> = ({ postId }) => {
 
     const [isExpend, setIsExpend] = useState(false);
 
-    useEffect(() => {
-        fetchComments(); //todo put here async to simulate the fetch ?
-    }, [])
+    const { postComments } = useFeedStore();
 
     const handleExpend = () => {
         setIsExpend(prev => !prev);
     }
 
+    const comments = postComments[postId];
+  
     return (
         <View>
-            <TouchableOpacity onPress={handleExpend}>
-                <Text>expend comments</Text>
-            </TouchableOpacity>
-            {
-                comments.length > 0
-                    ? !isExpend
-                        ? <Comment comment={comments[0]} />
-                        : <FlatList
-                            data={comments}
+            {comments?.length > 0 ?
+                <>
+                    <TouchableOpacity onPress={handleExpend}>
+                        <Text>{isExpend ? "collapse" : "expand"}</Text>
+                    </TouchableOpacity>
+
+                    {isExpend
+                        ? < FlatList
+                            data={postComments[postId]}
                             renderItem={({ item }) => <Comment comment={item} />}
                             keyExtractor={({ id }) => id}
                         />
-                    : null
+                        : null
+                    }
+                </>
+                : null
             }
         </View>
     );
 };
 
-export default CommentsFeed;
+export default observer(CommentsFeed);

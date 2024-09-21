@@ -1,41 +1,52 @@
-import { makeAutoObservable } from "mobx";
-
+import { action, makeAutoObservable } from "mobx";
 import { createContext, useContext } from "react";
 import { postsData, commentsData } from "../fakeData";
-
 import { PostType } from "../interfaces/post.interface";
 import { CommentType } from "../interfaces/comment.interface";
 
+/**
+ * Store for managing the feed state (posts, comments)
+ */
 export class FeedStore {
-    post: PostType[] = [];
-    comments: CommentType[] = [];
+    posts: PostType[] = [];
+    postComments: Record<string, CommentType[]> = {};
 
     constructor() {
         makeAutoObservable(this, {}, { autoBind: true });
     }
 
-    fetchPosts() {
+    //Fetch posts form specific index to other index for good resulats to not bring all the posts together
+    fetchPosts(startIndex: number, endIndex: number) {
         setTimeout(() => {
-            this.post = postsData;
-        }, 1000);
+            const newPosts = postsData.slice(startIndex, endIndex);
+            this.posts = [...this.posts, ...newPosts];
+        }, 3000);
     }
 
-    fetchComments() {
+
+    // Fetch comments for specified post IDs
+    fetchComments(displayPostIds: string[]) {
         setTimeout(() => {
-            this.comments = commentsData; 
-        }, 1000);
+            displayPostIds.forEach(id => {
+                const currentPostsComments = commentsData.filter(({ postId }) => postId === id);
+                this.postComments[id] = currentPostsComments;
+            });
+        }, 3000);
     }
 
-    updatePostLike(postId: string, changeLikeNum: number) {
-        const post = this.post.find(({ id }) => id === postId);
+
+    // Update the like count for a specific post
+    // Get the post id and amount of like to change
+    updatePostLike(postId: string, likeChange: number) {
+        const post = this.posts.find(({ id }) => id === postId);
         if (post) {
-            post.likes += changeLikeNum;
+            post.likes += likeChange;
         }
     }
 
     reset() {
-        this.post = [];
-        this.comments = [];
+        this.posts = [];
+        this.postComments = {};
     }
 }
 

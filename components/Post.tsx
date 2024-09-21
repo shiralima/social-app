@@ -13,7 +13,6 @@ interface PostProps {
 const Post: FC<PostProps> = ({ post }) => {
 
     const { updatePostLike } = useFeedStore();
-
     const [isLikePress, setIsLikePress] = useState(false);
 
     const handleOnPressLike = () => {
@@ -52,16 +51,18 @@ const Post: FC<PostProps> = ({ post }) => {
                     {post.likes}
                 </Text>
             </View>
-            <CommentsFeed />
+
+            <CommentsFeed postId={post.id} />
         </View>
     );
 };
 
 const styles = StyleSheet.create({
     postContainer: {
-        margin: 20,
+        marginStart: 20,
+        marginEnd: 20,
         borderBottomWidth: 1,
-        borderBottomColor: 'gray',
+        borderColor: '#bbb',
         justifyContent: "center",
         paddingBottom: 15,
     },
