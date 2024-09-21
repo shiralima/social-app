@@ -1,0 +1,1 @@
+export const NUM_LOADS_PER_PAGE = 5;
