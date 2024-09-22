@@ -117,11 +117,9 @@ describe("FeedStore", () => {
     it('should clear store', () => {
         store.posts = store.getStubsPost();
         store.setLoadingPosts(true);
-        store.setLoadingComments(true);
 
         store.reset(); // Check for reset action
         expect(store.posts.length).toBe(0);
         expect(store.loadingPosts).toBe(false);
-        expect(store.loadingComments).toBe(false);
     });
 });

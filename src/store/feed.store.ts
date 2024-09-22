@@ -25,7 +25,6 @@ interface PostCommentsInfo {
 export class FeedStore {
     posts: PostType[] = [];
     postCommentsInfo: Map<string, PostCommentsInfo> = new Map();
-    loadingComments: boolean = false;
     loadingPosts: boolean = false;
     hasMorePosts: boolean = true;
 
@@ -80,7 +79,6 @@ export class FeedStore {
 
     // Fetch all comments for a specific post ID
     async fetchAllComments(postId: string) {
-        this.setLoadingComments(true);
         await new Promise<void>(resolve =>
             setTimeout(() => {
                 runInAction(() => {
@@ -91,7 +89,6 @@ export class FeedStore {
                     } else {
                         this.postCommentsInfo.set(postId, { comments: postComments, count: postComments.length });
                     }
-                    this.setLoadingComments(false);
                 });
                 resolve();
             }, 1000)
@@ -114,12 +111,6 @@ export class FeedStore {
         });
     }
 
-    setLoadingComments = (isLoading: boolean) => {
-        runInAction(() => {
-            this.loadingComments = isLoading;
-        });
-    }
-
     //! Those functions are just for testing - do not use them
     getStubsPost = () => {
         return this.stubsPost;
@@ -134,7 +125,6 @@ export class FeedStore {
         runInAction(() => {
             this.posts = [];
             this.postCommentsInfo.clear();
-            this.loadingComments = false;
             this.loadingPosts = false;
             this.hasMorePosts = true;
             this.stubsComments = [];

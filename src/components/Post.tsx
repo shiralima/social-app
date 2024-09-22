@@ -25,8 +25,9 @@ interface PostProps {
 const Post: FC<PostProps> = observer(({ post }) => {
     const { updatePostLike, fetchAllComments, postCommentsInfo } = useFeedStore();
 
-    const [isExpanded, setIsExpanded] = useState(false);
     const [isLiked, setIsLiked] = useState(false);
+    const [isExpanded, setIsExpanded] = useState(false);
+    const [loadingComments, setLoadingComments] = useState(false);
 
     const handlePressLike = () => {
         const changeLikeNum = isLiked ? -1 : 1;
@@ -34,12 +35,14 @@ const Post: FC<PostProps> = observer(({ post }) => {
         setIsLiked(prev => !prev);
     };
 
-    const handleExpandComments = () => {
+    const handleExpandComments = async () => {
         const { comments, count } = postCommentsInfo.get(post.id);
 
         // If expanded and we haven't fetched all the comments yet 
         if (!isExpanded && comments.length === 1 && count > 1) {
-            fetchAllComments(post.id);
+            setLoadingComments(true);
+            await fetchAllComments(post.id);
+            setLoadingComments(false);
         }
         setIsExpanded(prev => !prev);
     };
@@ -50,16 +53,16 @@ const Post: FC<PostProps> = observer(({ post }) => {
                 <Text>{post.author}</Text>
                 <Text>{post.createDate.toDateString()}</Text>
             </View>
-            
+
             <Text style={postStyle.postContent}>{post.content}</Text>
-            
+
             {post.imageUrl && (
                 <Image
                     style={postStyle.image}
                     source={{ uri: post.imageUrl }}
                 />
             )}
-            
+
             <View style={postStyle.interactionsContainer}>
                 <View style={postStyle.likeAndExpendBtn}>
                     <View style={postStyle.likeContainer}>
@@ -71,11 +74,11 @@ const Post: FC<PostProps> = observer(({ post }) => {
                         </TouchableOpacity>
                         <Text style={postStyle.likesAmount}>{post.likes}</Text>
                     </View>
-                    
+
                     <ExpendComments isExpanded={isExpanded} postId={post.id} handleExpend={handleExpandComments} />
                 </View>
-                
-                <CommentsFeed postId={post.id} isExpanded={isExpanded} />
+
+                <CommentsFeed postId={post.id} isExpanded={isExpanded} loadingComments={loadingComments} />
             </View>
         </View>
     );
