@@ -1,8 +1,13 @@
 import { makeAutoObservable, runInAction } from "mobx";
 import { createContext, useContext } from "react";
-import { STUBS_POSTS, STUBS_COMMENTS } from "../consts/fakeData";
+
 import { PostType } from "../interfaces/post.interface";
 import { CommentType } from "../interfaces/comment.interface";
+
+import { DEFAULT_POSTS_NUMBER, DEFAULT_COMMENTS_NUMBER } from "../consts/dataNumbers";
+import { NUM_LOADS_PER_PAGE } from "../consts/postsToLoad";
+import { generatePosts } from "../utilities/generatePosts";
+import { generateComments } from "../utilities/generateComments";
 
 interface PostCommentsInfo {
     comments: CommentType[];
@@ -10,17 +15,13 @@ interface PostCommentsInfo {
 }
 
 /**
- * store for managing the feed state (posts, comments)
+ * Store for managing feed state (posts, comments).
  * 
- * 
+ * This store simulates a database with stub data for posts and comments,
+ * which is used to mimic fetching data from a server. 
+ * The "database" is created at the store's initialization and serves as a
+ * mock for testing and development.
  */
-
-interface PostCommentsInfo {
-    comments: CommentType[];
-    count: number;
-}
-const NUM_LOADS_PER_PAGE = 3;
-
 export class FeedStore {
     posts: PostType[] = [];
     postCommentsInfo: Map<string, PostCommentsInfo> = new Map();
@@ -28,41 +29,45 @@ export class FeedStore {
     loadingPosts: boolean = false;
     hasNoMorePosts: boolean = false;
 
-    constructor() {
+    // Those states are for simulate the data in DB
+    protected stubsPost: PostType[] = [];
+    protected stubsComments: CommentType[] = [];
+
+    constructor(postsAmount: number = DEFAULT_POSTS_NUMBER, commentsAmount: number = DEFAULT_COMMENTS_NUMBER) {
         makeAutoObservable(this, {}, { autoBind: true });
+        this.generateStubsData(postsAmount, commentsAmount)
     }
 
-    // Fetch posts from specific index to another index for better performance, not fetching all posts at once.
-    // Here we dont set the load becuse the loadingPost flag is for full post data, form this funciton 
-    // And form fetchCommentsInfo funciton so we handle the load in the infinate load 
-   async fetchPosts(startIndex: number, endIndex: number) {
+    private generateStubsData(postAmount: number, commentAmount: number) {
+        const posts = generatePosts(postAmount);
+        this.stubsPost = posts;
+        const ids = posts.map(({ id }) => id);
+        const comments = generateComments(ids, commentAmount);
+        this.stubsComments = comments;
+    }
 
-    const newPosts = await new Promise<PostType[]>(resolve =>
-        setTimeout(() => {
-            resolve(STUBS_POSTS.slice(startIndex, endIndex));
-        }, 1000)
-    );
+    // Fetch posts from specified index range for better performance.
+    // This method avoids fetching all posts at once, enhancing loading speed.
+    async fetchPosts(startIndex: number, endIndex: number) {
+        const newPosts = await new Promise<PostType[]>(resolve =>
+            setTimeout(() => resolve(this.stubsPost.slice(startIndex, endIndex)), 1000)
+        );
 
-    runInAction(() => {
-        this.posts = [...this.posts, ...newPosts];
+        runInAction(() => {
+            this.posts = [...this.posts, ...newPosts];
+            this.hasNoMorePosts = newPosts.length < NUM_LOADS_PER_PAGE; // Check if there are more posts to load
+        });
+    }
 
-        if (newPosts.length < NUM_LOADS_PER_PAGE) {
-            this.hasNoMorePosts = false;
-        }
-    });
-}
-    // Fetch the count and the first comment for specified post IDs
-    // In this function we do'nt set the loading comments to true beacuse this couse loader to render and
-    // when we call to this function we also call to loading posts. this data is like anther data that related to 
-    // the post and we dont want to display the post before it loaded
+    // Fetch comment count and first comment for specified post IDs
     async fetchCommentsInfo(postIds: string[]) {
         await new Promise<void>(resolve =>
             setTimeout(() => {
                 runInAction(() => {
                     postIds.forEach(postId => {
-                        const postComments = STUBS_COMMENTS.filter(({ postId: id }) => id === postId);
+                        const postComments = this.stubsComments.filter(({ postId: id }) => id === postId);
                         const count = postComments.length;
-                        if (!count) return;
+                        if (!count) this.postCommentsInfo.set(postId, { comments: [], count: 0 }); // Prevent bugs when there is no key 
 
                         const firstComment = [postComments[0]];
                         this.postCommentsInfo.set(postId, { comments: firstComment, count });
@@ -79,7 +84,7 @@ export class FeedStore {
         await new Promise<void>(resolve =>
             setTimeout(() => {
                 runInAction(() => {
-                    const postComments = STUBS_COMMENTS.filter(({ postId: id }) => id === postId);
+                    const postComments = this.stubsComments.filter(({ postId: id }) => id === postId);
                     const existingInfo = this.postCommentsInfo.get(postId);
                     if (existingInfo) {
                         existingInfo.comments = postComments;
@@ -115,6 +120,16 @@ export class FeedStore {
         });
     }
 
+    //! Those functions are just for testing - do not use them
+    getStubsPost = () => {
+        return this.stubsPost;
+    }
+
+    getStubsComments = () => {
+        return this.stubsComments;
+    }
+
+
     reset() {
         runInAction(() => {
             this.posts = [];
@@ -122,6 +137,8 @@ export class FeedStore {
             this.loadingComments = false;
             this.loadingPosts = false;
             this.hasNoMorePosts = false;
+            this.stubsComments = [];
+            this.stubsPost = [];
         });
     }
 }

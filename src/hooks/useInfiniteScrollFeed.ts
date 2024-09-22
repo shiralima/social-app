@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 
 import { useFeedStore } from '../store/feed.store';
 
-import { STUBS_POSTS } from '../consts/fakeData';
 import { NUM_LOADS_PER_PAGE } from 'src/consts/postsToLoad';
 
 /**
@@ -10,7 +9,7 @@ import { NUM_LOADS_PER_PAGE } from 'src/consts/postsToLoad';
  * @returns loadFullPostsData function.
  */
 export const useInfiniteScrollFeed = () => {
-    const { fetchPosts, fetchCommentsInfo, loadingPosts, hasNoMorePosts, setLoadingPosts } = useFeedStore();
+    const { fetchPosts, fetchCommentsInfo, loadingPosts, hasNoMorePosts, setLoadingPosts, getStubsPost } = useFeedStore();
     const [currentPage, setCurrentPage] = useState(0);
 
     useEffect(() => {
@@ -29,7 +28,7 @@ export const useInfiniteScrollFeed = () => {
         try {
             // Fetch the post according to the current page and the first comment for every post
             await fetchPosts(startIndex, endIndex);
-            const newPostIds = STUBS_POSTS.slice(startIndex, endIndex).map(({ id }) => id);
+            const newPostIds = getStubsPost().slice(startIndex, endIndex).map(({ id }) => id);
             await fetchCommentsInfo(newPostIds);
             setCurrentPage(prev => prev + 1); // Update page number
         } catch (err) {
