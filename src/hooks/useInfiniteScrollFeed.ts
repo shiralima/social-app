@@ -2,24 +2,24 @@ import { useEffect, useState } from 'react';
 
 import { useFeedStore } from '../store/feed.store';
 
-import { NUM_LOADS_PER_PAGE } from 'src/consts/postsToLoad';
+import { NUM_LOADS_PER_PAGE } from '@/consts/postsToLoad';
 
 /**
  * Custom hook for managing infinite scroll and dynamic loading of posts.
- * @returns loadFullPostsData function.
+ * @returns loadMorePosts function.
  */
 export const useInfiniteScrollFeed = () => {
-    const { fetchPosts, fetchCommentsInfo, loadingPosts, hasNoMorePosts, setLoadingPosts, getStubsPost } = useFeedStore();
+    const { fetchPosts, fetchCommentsInfo, loadingPosts, hasMorePosts, setLoadingPosts, getStubsPost } = useFeedStore();
     const [currentPage, setCurrentPage] = useState(0);
 
     useEffect(() => {
-        loadFullPostsData();
+        loadMorePosts();
     }, []);
 
     // Load posts and the first comment 
-    const loadFullPostsData = async () => {
+    const loadMorePosts = async () => {
 
-        if (loadingPosts || hasNoMorePosts) return;
+        if (loadingPosts || !hasMorePosts) return;
         setLoadingPosts(true)
 
         const startIndex = currentPage * NUM_LOADS_PER_PAGE;
@@ -39,5 +39,5 @@ export const useInfiniteScrollFeed = () => {
         }
     };
 
-    return { loadFullPostsData };
+    return { loadMorePosts };
 };

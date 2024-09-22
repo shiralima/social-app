@@ -27,7 +27,7 @@ export class FeedStore {
     postCommentsInfo: Map<string, PostCommentsInfo> = new Map();
     loadingComments: boolean = false;
     loadingPosts: boolean = false;
-    hasNoMorePosts: boolean = false;
+    hasMorePosts: boolean = true;
 
     // Those states are for simulate the data in DB
     protected stubsPost: PostType[] = [];
@@ -55,7 +55,7 @@ export class FeedStore {
 
         runInAction(() => {
             this.posts = [...this.posts, ...newPosts];
-            this.hasNoMorePosts = newPosts.length < NUM_LOADS_PER_PAGE; // Check if there are more posts to load
+            this.hasMorePosts = newPosts.length >= NUM_LOADS_PER_PAGE; // Check if there are more posts to load
         });
     }
 
@@ -136,7 +136,7 @@ export class FeedStore {
             this.postCommentsInfo.clear();
             this.loadingComments = false;
             this.loadingPosts = false;
-            this.hasNoMorePosts = false;
+            this.hasMorePosts = true;
             this.stubsComments = [];
             this.stubsPost = [];
         });

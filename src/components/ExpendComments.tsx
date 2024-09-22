@@ -1,38 +1,42 @@
-import React, { FC } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { useFeedStore } from '../store/feed.store';
+import React, { FC } from "react";
+import { observer } from "mobx-react-lite";
+import { View, Text, TouchableOpacity } from "react-native";
+
+import { useFeedStore } from "@/store/feed.store";
+
+import { expendCommentsStyle } from "@/styles";
 
 interface ExpendCommentsProps {
     postId: string;
-    isExpend: boolean;
+    isExpanded: boolean;
     handleExpend: () => void;
 }
 
-const ExpendComments: FC<ExpendCommentsProps> = ({ postId, isExpend, handleExpend }) => {
+/** ExpendComments
+ * 
+ * The expend component with expend button and amount of the comments
+ * @param postId - current post id 
+ * @param isExpanded - boolean to detmante if the icon is expended or not, the state is mange by Post
+ * @param handleExpend - function to toggle the expended state
+ * @returns  {JSX.Element} rendered posts feed
+ */
+const ExpendComments: FC<ExpendCommentsProps> = observer(({ postId, isExpanded, handleExpend }) => {
     const { postCommentsInfo } = useFeedStore();
     const commentsInfo = postCommentsInfo.get(postId);
 
     const commentsAmount = commentsInfo?.count || 0;
 
-    //todo change expend to icon
-    return (
-        <View style={styles.expendCommentsContainer}>
-            <Text>{commentsAmount}</Text>
-            {commentsAmount > 1
-                ? <TouchableOpacity onPress={handleExpend}>
-                    <Text>{isExpend ? " collapse " : " expand "}</Text>
-                </TouchableOpacity>
-                : null
-            }
-        </View>
-    );
-};
+    return commentsInfo ? (
+        <View style={expendCommentsStyle.expendCommentsContainer}>
+            <Text>{commentsAmount} comments </Text>
 
-const styles = StyleSheet.create({
-    expendCommentsContainer: {
-        flexDirection: 'row',
-        marginHorizontal: 15
-    },
+            {commentsAmount > 1 && (
+                <TouchableOpacity onPress={handleExpend}>
+                    <Text>{isExpanded ? "Collapse" : "Expand"}</Text>
+                </TouchableOpacity>
+            )}
+        </View>
+    ) : null
 });
 
 export default React.memo(ExpendComments);

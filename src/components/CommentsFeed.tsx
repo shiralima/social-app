@@ -1,52 +1,50 @@
 import React, { FC } from "react";
-import { FlatList, View, StyleSheet, ActivityIndicator } from 'react-native';
-import { useFeedStore } from "../store/feed.store";
 import { observer } from "mobx-react-lite";
+import { FlatList, View, ActivityIndicator } from "react-native";
 
-import Comment from './Comment';
+import Comment from "./Comment";
+import { useFeedStore } from "@/store/feed.store";
 
-type PropsCommentsFeed = {
+import { commentsFeedStyle } from "@/styles";
+
+type CommentsFeedProps = {
     postId: string;
-    isExpend: boolean;
+    isExpanded: boolean;
 };
 
-const CommentsFeed: FC<PropsCommentsFeed> = ({ postId, isExpend }) => {
-    const { postCommentsInfo, loadingComments, loadingPosts } = useFeedStore();
+/** CommentsFeed
+ * 
+ * The component that displays comments for a given post
+ * @param postId - The id of the current post
+ * @param isExpanded - Boolean indicating whether comments are expanded or not
+ * @returns {JSX.Element | null} Rendered comments or null if no comments
+ */
+const CommentsFeed: FC<CommentsFeedProps> = ({ postId, isExpanded }) => {
+    const { postCommentsInfo, loadingComments } = useFeedStore();
     const commentsInfo = postCommentsInfo.get(postId);
 
-    if (!loadingPosts && commentsInfo) {
-        const comments = commentsInfo.comments
+    if (!commentsInfo || !commentsInfo.comments.length || commentsInfo.count === 0) {
+        return null;
+    }
 
-        return (
-            <View style={styles.commentsFeedContainer}>
-                {isExpend
-                    ? loadingComments
-                        ?
-                        <>
-                            <Comment comment={comments[0]} />
-                            <ActivityIndicator />
-                        </>
-                        : <FlatList
-                            data={comments}
-                            renderItem={({ item }) => <Comment comment={item} />}
-                            keyExtractor={({ id }) => id}
-                        />
+    const { comments } = commentsInfo;
+
+    return (
+        <View style={commentsFeedStyle.commentsFeedContainer}>
+            {loadingComments
+                ? <>
+                    <ActivityIndicator />
+                    {comments.length > 0 && <Comment comment={comments[0]} />}
+                </>
+                : isExpanded && commentsInfo.count > 1
+                    ? <FlatList
+                        data={comments}
+                        renderItem={({ item }) => <Comment comment={item} />}
+                        keyExtractor={({ id }) => id}
+                    />
                     : <Comment comment={comments[0]} />
-                }
-            </View>
-        )
-    } else return (<></>)
+            }
+        </View>
+    );
 };
-
-const styles = StyleSheet.create({
-    commentsFeedContainer: {
-        marginTop: 10,
-    },
-    expandIcon: {
-        width: 20,
-        height: 20,
-        alignSelf: "flex-end",
-    },
-});
-
 export default observer(CommentsFeed);
