@@ -1,9 +1,12 @@
-import { FeedStore } from '../src/store/feed.store';
 import { faker } from '@faker-js/faker/.';
+
+import { FeedStore } from '../src/store/feed.store';
+
 import { NUM_LOADS_PER_PAGE } from '../src/consts/postsToLoad';
 import { DEFAULT_COMMENTS_NUMBER, DEFAULT_POSTS_NUMBER } from '../src/consts/dataNumbers';
 
 jest.useFakeTimers();
+
 
 describe("FeedStore", () => {
     let store: FeedStore;
@@ -17,6 +20,15 @@ describe("FeedStore", () => {
     });
 
 
+    const fetchPostsForSpecificIndex = async () => {
+        const randomStartIndex = faker.number.int({ min: 0, max: store.getStubsPost().length - 1 });
+        const randomEndIndex = faker.number.int({ min: randomStartIndex + 1, max: store.getStubsPost().length });
+
+        await store.fetchPosts(randomStartIndex, randomEndIndex);
+
+        return randomEndIndex - randomStartIndex;
+    }
+
     it("should store create fake post", async () => {
         expect(store.getStubsPost().length).toBe(DEFAULT_POSTS_NUMBER);
     });
@@ -27,20 +39,17 @@ describe("FeedStore", () => {
 
 
     it("should fetch posts from index to index", async () => {
-        // jest.runAllTimersAsync()
-        const randomStartIndex = faker.number.int({ min: 0, max: store.getStubsPost().length - 1 });
-        const randomEndIndex = faker.number.int({ min: randomStartIndex + 1, max: store.getStubsPost().length });
+        jest.runAllTimersAsync()
 
-        await store.fetchPosts(randomStartIndex, randomEndIndex);
+        const postsLength = await fetchPostsForSpecificIndex()
 
-        expect(store.posts.length).toBe(randomEndIndex - randomStartIndex);
+        expect(store.posts.length).toBe(postsLength);
     });
 
     it("should fetch comments info (first comment and amount) for posts", async () => {
-        const randomStartIndex = faker.number.int({ min: 0, max: store.getStubsPost().length - 1 });
-        const randomEndIndex = faker.number.int({ min: randomStartIndex + 1, max: store.getStubsPost().length });
 
-        await store.fetchPosts(randomStartIndex, randomEndIndex);
+        await fetchPostsForSpecificIndex();
+
         jest.runAllTimers();
         const postIds = store.posts.map(({ id }) => id);
 
@@ -57,7 +66,7 @@ describe("FeedStore", () => {
         });
     });
 
-    
+
 
     it("should fetch comments", async () => {
         jest.runAllTimersAsync();
@@ -85,7 +94,7 @@ describe("FeedStore", () => {
     });
 
     it('should update post like count', () => {
-        // get random post to update
+        // Get random post to update
         const randomPostIndex = faker.number.int({ min: 0, max: store.getStubsPost().length - 1 });
         const { id, likes } = store.getStubsPost()[randomPostIndex];
         store.posts = store.getStubsPost();
