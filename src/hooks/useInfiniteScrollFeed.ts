@@ -25,18 +25,12 @@ export const useInfiniteScrollFeed = () => {
         const startIndex = currentPage * NUM_LOADS_PER_PAGE;
         const endIndex = (currentPage + 1) * NUM_LOADS_PER_PAGE;
 
-        try {
-            // Fetch the post according to the current page and the first comment for every post
-            await fetchPosts(startIndex, endIndex);
-            const newPostIds = getStubsPost().slice(startIndex, endIndex).map(({ id }) => id);
-            await fetchCommentsInfo(newPostIds);
-            setCurrentPage(prev => prev + 1); // Update page number
-        } catch (err) {
-            console.log("err:", err) // todo handle all errors
-        }
-        finally {
-            setLoadingPosts(false);
-        }
+        // Fetch the post according to the current page and the first comment for every post
+        await fetchPosts(startIndex, endIndex);
+        const newPostIds = getStubsPost().slice(startIndex, endIndex).map(({ id }) => id);
+        await fetchCommentsInfo(newPostIds);
+        setCurrentPage(prev => prev + 1); // Update page number
+        setLoadingPosts(false);
     };
 
     return { loadMorePosts };

@@ -1,16 +1,13 @@
 # Social Feed App
 
 ## Table of Contents
-[App Explanations](#app-explanations)
-- [Social Feed App](#social-feed-app)
-  - [Table of Contents](#table-of-contents)
-  - [App Explanations](#app-explanations)
-    - [Basic Explanation](#basic-explanation)
-    - [Technologies](#technologies)
-    - [Optimizations](#optimizations)
-    - [Stub Data](#stub-data)
-    - [Tests](#tests)
-  - [Run Project](#run-project)
+- [App Explanations](#app-explanations)
+  - [Basic Explanation](#basic-explanation)
+  - [Technologies](#technologies)
+  - [Optimizations](#optimizations)
+  - [Stub Data](#stub-data)
+  - [Tests](#tests)
+- [Run Project](#run-project)
     - [Set Up](#set-up)
       - [Pre Requisites](#pre-requisites)
       - [Installations](#installations)
@@ -31,7 +28,7 @@ For every post, we have these components: author, content, creation date, likes,
 - Babel
 - Jest
 - Faker
-- GitHub Actions (for running tests)
+- GitHub Actions
 - ESLint
 
 ### Optimizations
@@ -85,7 +82,7 @@ git clone https://github.com/shiralima/social-app.git
 ### Run the App
 First, you have to install all packages:
 ```
-    cd social-feed-app
+    cd social-app
     npm install
 ```
 
