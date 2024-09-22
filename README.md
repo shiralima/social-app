@@ -1,64 +1,96 @@
 # Social Feed App
 
+## Table of Contents
+[App Explanations](#app-explanations)
+- [Social Feed App](#social-feed-app)
+  - [Table of Contents](#table-of-contents)
+  - [App Explanations](#app-explanations)
+    - [Basic Explanation](#basic-explanation)
+    - [Technologies](#technologies)
+    - [Optimizations](#optimizations)
+    - [Stub Data](#stub-data)
+    - [Tests](#tests)
+  - [Run Project](#run-project)
+    - [Set Up](#set-up)
+      - [Pre Requisites](#pre-requisites)
+      - [Installations](#installations)
+    - [Run the App](#run-the-app)
 
-## Contributers
+## App Explanations
 
-## App Explnations
-### Basic Explantion:
-This app is a social feed app. this is infanty scroll feed with posts and comments.
-for every post we have those components: auther, content, create date, likes and image url that is non require. for every post we have also comments that related to post from post id key in comment. in comment we have thsoe components: authehr and content.
+### Basic Explanation
+This app is a social feed app. It features an infinite scroll feed with posts and comments.
+For every post, we have these components: author, content, creation date, likes, comments, and an optional image URL. In comments, we have these components: author and content.
 
-### Techonogiles
-TS, React Native, Expo, EAS, NPM, MobX, Babel, Jest, Faker
-### Optimazations
-### Stubs Data
-fake data for posts and comments. we creae the stub data by faker labery. i generate diffrent posts with diffrent longs, likes, comments, image or not image and so. we can change the number of posts and comments by simply 
+### Technologies
+- TypeScript
+- React Native
+- Expo
+- NPM
+- MobX
+- Babel
+- Jest
+- Faker
+- GitHub Actions (for running tests)
+- ESLint
+
+### Optimizations
+Optimize the app by using FlatList with best practices. Load new posts only when the user scrolls and load just a few posts at a time. Use React.memo and useCallback for better performance. For displaying posts with comments, show the first comment and the number of comments per post. These functions improve performance if the data is stored in a database. It's better to use `findFirst` and `count` than to bring all comments at once. This approach also enhances UI/UX by not showing all comments initially. I achieve this with a Map structure, which provides better performance.
+
+### Stub Data
+For stub data for posts and comments, I use the Faker library. The amount of data generated is controlled by data constants. I generate different posts with varying lengths, likes, comments, images, and without images.
+
 ### Tests
+Create tests for the store with Jest in the `__tests__` folder. I wrote unit tests (UT) for every important function in the store.
 
-## Run project
+> [TIP]  
+> For checking a large amount of data, we can modify the store creation as follows - when creating the store, change the default amounts.
+> ```
+>   beforeEach(() => {
+>       store = new FeedStore(NEW_POSTS_NUMBER, NEW_COMMENTS_NUMBER);
+>   });
+> ```
 
-### Set up
+## Run Project
 
-#### Pre requiments
+### Set Up
+
+#### Pre Requisites
+1. If you don't have nvm installed, you can install it by following the instructions here:
+https://monovm.com/blog/install-nvm-on-ubuntu/#How-to-Install-NVM-on-Ubuntu?
+
+2. Node version 20
+If you already have Node 20 installed, you can use it by running `nvm use 20`.
+
+If not, install Node 20 and npm by running:
+```
+    nvm install 20
+    nvm use 20
+```
+
+3. Expo CLI
+Install Expo CLI globally by running:
+`npm install -g expo-cli`
+
+4. Expo Go
+Install Expo Go on your device/emulator
+
+#### Installations
+Clone the app from GitHub:
+
+Using HTTPS:
+git clone https://github.com/shiralima/social-app.git
 
 
-1. node / npm - node version 20 <!-- put here code to use & install node 20 -->
-2. expo cli <!-- put here code to install -->
-4. eas cli 
-3. any other ??????????
+### Run the App
+First, you have to install all packages:
+```
+    cd social-feed-app
+    npm install
+```
 
-#### Instalations
+Than, run the tests to ensure everything works as expected:
+`npm run test`
 
-install app form git
-using https / ssh
-
-#### options to run the app
-
-##### builds options
-For android you can simply install on emulator my bild 
-For iOS you need to do those steps: 
-
-
-##### expo go app
-you have 2 options:
-1. install Expo Go on you device and scan the QR code
-2. install expo on emulater add more things
-
-
-
- * general thougs about prefomence. we want to handle an infinty feed, so we will deal with nurmuse of data
- * beacuse of that i treat the fetch the data as i do if it will be like this and as i will devlop also the api
- * the best approuch for me was to seperate the comments for 3 situations. 
- * 1. this post we can't see - dont bring any comments or data on them.
- * 2. posts that we see on our feed. to give to use good ux as well as limit the calls to db wich will couse our 
- * app to slow i prefer to bring any time just the first comment and the number of comments for each post. 
- * this can gave to the user general idea about the comments in this post and he will decide if it check 
- * any others comments in this post. when we handle a lot of data count and find just the first element 
- * is crutial faster and in most case users dont wand to see all the data. 
- * 3. specifck post data comments. when users hit the expend btn on the comments we do anther call to get this 
- * time every comments in the specifck post.
- * 
- * all of those handles in Map starcter wich is fast, excelnt for this situation and easy to handle.
- * we put in the key the postId (so if we aldrey bring some posts comments they will save in the map and no need to bring them again)
- * and as the value we have comments (if we on the 2 case we only bring the first one than in the 3 we bring evething)
- * and also the amount of comments this post id have.
+Then run the app via:
+`npm start`
