@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useCallback } from "react";
 import { observer } from "mobx-react-lite";
 import { FlatList, View, ActivityIndicator } from "react-native";
 
@@ -30,6 +30,10 @@ const CommentsFeed: FC<CommentsFeedProps> = ({ postId, isExpanded, loadingCommen
         return null;
     }
 
+    const renderItem = useCallback(({ item }) => {
+        return <Comment comment={item} />
+    }, []);
+
     const { comments } = commentsInfo;
 
     return (
@@ -42,7 +46,7 @@ const CommentsFeed: FC<CommentsFeedProps> = ({ postId, isExpanded, loadingCommen
                 : isExpanded && commentsInfo.count > 1
                     ? <FlatList
                         data={comments}
-                        renderItem={({ item }) => <Comment comment={item} />}
+                        renderItem={renderItem}
                         keyExtractor={({ id }) => id}
                     />
                     : <Comment comment={comments[0]} />

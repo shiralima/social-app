@@ -10,6 +10,12 @@ interface CommentProps {
     comment: CommentType
 }
 
+/** Comment
+ * 
+ * component component
+ * @param comment - comment object to render its data
+ * @returns {JSX.Element} Rendered component component
+ */
 const Comment: FC<CommentProps> = ({ comment }) => {
     return (
         <View style={commentStyle.commentContainer}>

@@ -60,21 +60,20 @@ export class FeedStore {
 
     // Fetch comment count and first comment for specified post IDs
     async fetchCommentsInfo(postIds: string[]) {
-        await new Promise<void>(resolve =>
+        const promises = postIds.map(postId => new Promise<void>(resolve =>
             setTimeout(() => {
                 runInAction(() => {
-                    postIds.forEach(postId => {
-                        const postComments = this.stubsComments.filter(({ postId: id }) => id === postId);
-                        const count = postComments.length;
-                        if (!count) this.postCommentsInfo.set(postId, { comments: [], count: 0 }); // Prevent bugs when there is no key 
-
-                        const firstComment = [postComments[0]];
-                        this.postCommentsInfo.set(postId, { comments: firstComment, count });
-                    });
+                    const postComments = this.stubsComments.filter(({ postId: id }) => id === postId);
+                    const count = postComments.length;
+                    if (!count) this.postCommentsInfo.set(postId, { comments: [], count: 0 }); // Prevent bugs when there is no key 
+    
+                    const firstComment = [postComments[0]];
+                    this.postCommentsInfo.set(postId, { comments: firstComment, count });
                 });
                 resolve();
             }, 1000)
-        );
+        ));
+        await Promise.all(promises)
     }
 
     // Fetch all comments for a specific post ID
