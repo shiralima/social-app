@@ -1,2 +1,2 @@
-export const USER_PROFILE_ICON = 'https://img.icons8.com/ios-filled/50/000000/user-male-circle.png';
+export const USER_PROFILE_ICON = "https://img.icons8.com/ios-filled/50/000000/user-male-circle.png";
 export const FEEDBACK_LIKE_ICON = "https://upload.wikimedia.org/wikipedia/commons/1/13/Facebook_like_thumb.png"

@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
-import { useFeedStore } from '../store/feed.store';
+import { useFeedStore } from "../store/feed.store";
 
-import { NUM_LOADS_PER_PAGE } from '@/consts/postsToLoad';
+import { NUM_LOADS_PER_PAGE } from "@/consts/postsToLoad";
 
 /**
  * Custom hook for managing infinite scroll and dynamic loading of posts.
@@ -32,7 +32,7 @@ export const useInfiniteScrollFeed = () => {
             await fetchCommentsInfo(newPostIds);
             setCurrentPage(prev => prev + 1); // Update page number
         } catch (err) {
-            console.log('err:', err) // todo handle all errors
+            console.log("err:", err) // todo handle all errors
         }
         finally {
             setLoadingPosts(false);

@@ -4,7 +4,7 @@ export const commentStyle = StyleSheet.create({
     commentContainer: {
         paddingVertical: 10,
         borderBottomWidth: 1,
-        borderColor: '#ddd',
+        borderColor: "#ddd",
         borderRadius: 10,
         margin: 5,
         padding: 7,

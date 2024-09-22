@@ -1,5 +1,5 @@
-import { faker } from '@faker-js/faker';
-import { CommentType } from '@/interfaces/comment.interface';
+import { faker } from "@faker-js/faker";
+import { CommentType } from "@/interfaces/comment.interface";
 
 
 // Generates comments with random post id each time

@@ -1,5 +1,5 @@
-import { faker } from '@faker-js/faker';
-import { PostType } from '@/interfaces/post.interface';
+import { faker } from "@faker-js/faker";
+import { PostType } from "@/interfaces/post.interface";
 
 // This way, for local testing, you can generate posts with large data sets
 export const generatePosts = (amount: number): PostType[] => {
