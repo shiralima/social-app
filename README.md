@@ -32,10 +32,10 @@ For every post, we have these components: author, content, creation date, likes,
 - ESLint
 
 ### Optimizations
-Optimize the app by using FlatList with best practices. Load new posts only when the user scrolls and load just a few posts at a time. Use React.memo and useCallback for better performance. For displaying posts with comments, show the first comment and the number of comments per post. These functions improve performance if the data is stored in a database. It's better to use `findFirst` and `count` than to bring all comments at once. This approach also enhances UI/UX by not showing all comments initially. I achieve this with a Map structure, which provides better performance.
+Optimize the app by using FlatList with best practices. Load new posts only when the user scrolls and load just a few posts at a time. Use React.memo and useCallback for better performance. For displaying posts with comments, show the first comment and the number of comments per post. These functions improve performance if the data is stored in a database. It's better to use find first element and count than to bring all comments at once. This approach also enhances UI/UX by not showing all comments initially. I achieve this with a Map structure, which provides better performance.
 
 ### Stub Data
-For stub data for posts and comments, I use the Faker library. The amount of data generated is controlled by data constants. I generate different posts with varying lengths, likes, comments, images, and without images.
+For stub data for posts and comments, I use the Faker library. The amount of data generated is controlled by data constants. I generate different posts with varying lengths, likes, comments, images, and without images or comments.
 
 ### Tests
 Create tests for the store with Jest in the `__tests__` folder. I wrote unit tests (UT) for every important function in the store.
