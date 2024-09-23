@@ -17,7 +17,7 @@
 
 ### Basic Explanation
 This app is a social feed app. It features an infinite scroll feed with posts and comments.
-For every post, we have these components: author, content, creation date, likes, comments, and an optional image URL. In comments, we have these components: author and content.
+For every post, we have these components: author, content, creation date, likes, comments (optional), and an image (optional). In comments, we have these components: author and content.
 
 ### Technologies
 - TypeScript
@@ -28,17 +28,17 @@ For every post, we have these components: author, content, creation date, likes,
 - Babel
 - Jest
 - Faker
-- GitHub Actions
+- GitHub Actions 
 - ESLint
 
 ### Optimizations
-Optimize the app by using FlatList with best practices. Load new posts only when the user scrolls and load just a few posts at a time. Use React.memo and useCallback for better performance. For displaying posts with comments, show the first comment and the number of comments per post. These functions improve performance if the data is stored in a database. It's better to use find first element and count than to bring all comments at once. This approach also enhances UI/UX by not showing all comments initially. I achieve this with a Map structure, which provides better performance.
+Optimize the app by using FlatList with best practices. Load new posts only when the user scrolls and load just a few posts at a time. Use React.memo and useCallback for better performance. For displaying posts with comments, show the first comment and the number of comments per post. These functions improve performance because it's better to use find first element and count than to bring all comments at once. This approach also enhances UI/UX by not showing all comments initially.
 
 ### Stub Data
-For stub data for posts and comments, I use the Faker library. The amount of data generated is controlled by data constants. I generate different posts with varying lengths, likes, comments, images, and without images or comments.
+For stub data for posts and comments, I use the `faker` library. The amount of data generated is controlled by data constants. I generate different posts with varying lengths, likes, comments and images.
 
 ### Tests
-Create tests for the store with Jest in the `__tests__` folder. I wrote unit tests (UT) for every important function in the store.
+Create tests for the store with Jest in the `__tests__` folder. I wrote UT for important functions in the store.
 
 > [TIP]  
 > For checking a large amount of data, we can modify the store creation as follows - when creating the store, change the default amounts.
@@ -53,7 +53,8 @@ Create tests for the store with Jest in the `__tests__` folder. I wrote unit tes
 ### Set Up
 
 #### Pre Requisites
-1. If you don't have nvm installed, you can install it by following the instructions here:
+1. NVM
+If you don't have nvm installed, you can install it by following the instructions here:
 https://monovm.com/blog/install-nvm-on-ubuntu/#How-to-Install-NVM-on-Ubuntu?
 
 2. Node version 20
